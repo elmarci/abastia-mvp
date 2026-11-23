@@ -385,9 +385,7 @@ async function main() {
   const usuariosProveedor = new Map<string, string>();
   for (const u of await prisma.usuario.findMany({ where: { rol: "PROVEEDOR" } })) usuariosProveedor.set(u.proveedorId!, u.id);
 
-  let numeroPedido = 0;
   async function crearPedido(op: OpcionesPedido) {
-    numeroPedido++;
     // Agrupamos por proveedor
     const grupos = new Map<string, Linea[]>();
     for (const l of op.lineas) {
