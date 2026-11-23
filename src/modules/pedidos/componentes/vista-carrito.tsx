@@ -23,6 +23,7 @@ export function VistaCarrito({
   sedes,
   sedeInicial,
   fechaMinima,
+  fechaInicial,
   hoy,
   mayorista,
 }: {
@@ -30,14 +31,15 @@ export function VistaCarrito({
   sedes: { id: string; nombre: string; distrito: string; limite: number }[];
   sedeInicial: string;
   fechaMinima: string;
+  /** Fecha propuesta (p. ej. por el asistente); si no es válida se usa la mínima. */
+  fechaInicial?: string;
   hoy: string;
-  feriados: string[];
   mayorista: boolean;
 }) {
   const router = useRouter();
   const [pendiente, iniciar] = useTransition();
   const [sedeId, setSedeId] = useState(sedeInicial);
-  const [fecha, setFecha] = useState(fechaMinima);
+  const [fecha, setFecha] = useState(fechaInicial && !validarFechaEntrega(fechaInicial, hoy) ? fechaInicial : fechaMinima);
   const [metodo, setMetodo] = useState<Metodo>("TRANSFERENCIA");
   const [notas, setNotas] = useState("");
   const errorFecha = validarFechaEntrega(fecha, hoy);

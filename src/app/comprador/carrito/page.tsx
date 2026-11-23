@@ -7,14 +7,15 @@ import { requerirPagina } from "@/lib/sesion";
 import { ROLES_COMPRADOR } from "@/lib/permisos";
 import { sedesYActual } from "@/lib/sede";
 import { num } from "@/lib/formato";
-import { primeraFechaEntrega, hoyEnLima, FERIADOS } from "@/lib/negocio";
+import { primeraFechaEntrega, hoyEnLima } from "@/lib/negocio";
 import { obtenerCarrito } from "@/modules/pedidos/carrito";
 import { VistaCarrito } from "@/modules/pedidos/componentes/vista-carrito";
 
 export const metadata: Metadata = { title: "Pedido consolidado" };
 
-export default async function PaginaCarrito() {
+export default async function PaginaCarrito({ searchParams }: { searchParams: Promise<{ fecha?: string }> }) {
   const usuario = await requerirPagina(ROLES_COMPRADOR);
+  const { fecha } = await searchParams;
   const [carrito, { sedes, actual }] = await Promise.all([obtenerCarrito(usuario.id), sedesYActual(usuario.empresaId!)]);
 
   return (
@@ -42,10 +43,10 @@ export default async function PaginaCarrito() {
         <VistaCarrito
           carrito={carrito}
           sedes={sedes.map((s) => ({ id: s.id, nombre: s.nombre, distrito: s.distrito, limite: num(s.montoLimiteAprobacion) }))}
-          sedeInicial={actual?.id ?? ""}
+          sedeInicial={sedes.find((s) => s.id === carrito.sedeId)?.id ?? actual?.id ?? ""}
           fechaMinima={primeraFechaEntrega()}
           hoy={hoyEnLima()}
-          feriados={[...FERIADOS]}
+          fechaInicial={fecha}
           mayorista={usuario.rol === "MAYORISTA"}
         />
       )}

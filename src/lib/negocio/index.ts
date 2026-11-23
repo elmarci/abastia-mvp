@@ -11,3 +11,4 @@ export * from "./fechas";
 export * from "./hipotesis";
 export * from "./licitacion";
 export * from "./validadores";
+export * from "./asistente";
