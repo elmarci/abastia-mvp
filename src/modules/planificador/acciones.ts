@@ -33,7 +33,7 @@ export async function guardarStock(entrada: z.infer<typeof esquemaStock>): Promi
  * Registra las sugerencias de la IA y las agrega al pedido.
  * Recalcula en el servidor para que nadie pueda alterar la sugerencia (medición H2).
  */
-export async function agregarSugerencias(entrada: z.infer<typeof esquemaSugerencias>): Promise<Resultado<{ agregadas: number }>> {
+export async function agregarSugerencias(entrada: z.infer<typeof esquemaSugerencias>): Promise<Resultado<{ agregadas: number; ajustadas: number }>> {
   return ejecutar(async () => {
     const usuario = await requerirEmpresa(["COMPRADOR", "APROBADOR"]);
     const datos = esquemaSugerencias.parse(entrada);
@@ -45,6 +45,7 @@ export async function agregarSugerencias(entrada: z.infer<typeof esquemaSugerenc
     if (enCarrito === 0) await prisma.carrito.update({ where: { id: carrito.id }, data: { iniciadoEn: new Date(), sedeId: sede.id } });
 
     let agregadas = 0;
+    let ajustadas = 0;
     for (const item of datos.items) {
       const historial = consumos.filter((c) => c.productoId === item.productoId).map((c) => c.cantidad);
       const holt = datos.modelo === "HOLT" ? pronosticoHolt(historial, datos.personas, sede.personasBase) : null;
@@ -71,16 +72,22 @@ export async function agregarSugerencias(entrada: z.infer<typeof esquemaSugerenc
           cantidadSugerida: sugerida,
         },
       });
+      // Si la sugerencia no llega al pedido mínimo del proveedor, se sube al mínimo
+      let cantidad = sugerida;
+      if (cantidad < oferta.pedidoMinimo) {
+        cantidad = oferta.pedidoMinimo;
+        ajustadas++;
+      }
       // Si el producto ya estaba en el carrito con esa oferta, se reemplaza por la sugerencia
       await prisma.itemCarrito.upsert({
         where: { carritoId_ofertaId: { carritoId: carrito.id, ofertaId: oferta.id } },
-        create: { carritoId: carrito.id, ofertaId: oferta.id, cantidad: sugerida, sugerenciaId: sugerencia.id },
-        update: { cantidad: sugerida, sugerenciaId: sugerencia.id },
+        create: { carritoId: carrito.id, ofertaId: oferta.id, cantidad, sugerenciaId: sugerencia.id },
+        update: { cantidad, sugerenciaId: sugerencia.id },
       });
       agregadas++;
     }
     if (agregadas === 0) throw new ErrorNegocio("No hay sugerencias para agregar: tu stock cubre la necesidad");
     revalidatePath("/comprador", "layout");
-    return { agregadas };
+    return { agregadas, ajustadas };
   });
 }

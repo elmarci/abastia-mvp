@@ -73,7 +73,8 @@ export function Planificador({ sede, filas }: { sede: { id: string; nombre: stri
         items: lista.map((c) => ({ productoId: c.productoId, ofertaId: c.mejorOferta!.id, stock: c.stock, pronostico: c.pronostico, cantidadSugerida: c.sugerida })),
       });
       if (r.ok) {
-        toast.success(`${r.datos?.agregadas} sugerencias agregadas al pedido`, { action: { label: "Ver pedido", onClick: () => router.push("/comprador/carrito") } });
+        toast.success(`${r.datos?.agregadas} sugerencias agregadas al pedido`, {
+          description: r.datos?.ajustadas ? `${r.datos.ajustadas} se subieron al pedido mínimo del proveedor.` : undefined, action: { label: "Ver pedido", onClick: () => router.push("/comprador/carrito") } });
         router.refresh();
       } else toast.error(r.error);
     });
