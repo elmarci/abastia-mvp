@@ -33,7 +33,7 @@ export default async function LotesProveedor() {
       {lotes.length === 0 ? (
         <EstadoVacio icono={<QrCode className="size-7" />} titulo="Aún no registraste lotes" />
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {lotes.map((l, i) => {
             const vencido = l.fechaVencimiento.toISOString().slice(0, 10) < hoy;
             return (

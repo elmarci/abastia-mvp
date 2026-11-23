@@ -52,7 +52,7 @@ export function FormularioLicitacion({ cierreSugerido }: { cierreSugerido: strin
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
       <Card>
         <CardHeader className="border-b border-border">
           <CardTitle>Bases</CardTitle>
@@ -66,7 +66,7 @@ export function FormularioLicitacion({ cierreSugerido }: { cierreSugerido: strin
             <Label htmlFor="lic-desc">Descripción y requisitos</Label>
             <Textarea id="lic-desc" rows={4} value={descripcion} onChange={(e) => setDescripcion(e.target.value)} placeholder="Productos, horarios y lugar de entrega, condiciones…" />
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="lic-meses">Plazo del contrato (meses)</Label>
               <Input id="lic-meses" type="number" min={1} max={36} value={meses} onChange={(e) => setMeses(e.target.value)} className="cifra" />

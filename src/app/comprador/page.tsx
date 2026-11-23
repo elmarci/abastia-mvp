@@ -42,14 +42,14 @@ export default async function PanelComprador() {
           </>
         }
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi titulo="Gasto del mes" valor={soles(d.gastoMes)} detalle="Pedidos aprobados, con IGV" icono={<ShoppingBag />} />
         <Kpi titulo="Ahorro acumulado" valor={<span data-testid="ahorro-acumulado">{soles(d.ahorroTotal)}</span>} detalle={`${porcentaje(d.porcentajeAhorro)} frente al precio promedio de mercado`} icono={<PiggyBank />} tono="ahorro" />
         <Kpi titulo="Pedidos del mes" valor={d.pedidosMes} icono={<CalendarCheck />} />
         <Kpi titulo="Proveedores usados" valor={d.proveedoresMes} detalle="Este mes, en un solo pedido consolidado" icono={<Truck />} />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-5">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle>Gasto mensual</CardTitle>
@@ -77,7 +77,7 @@ export default async function PanelComprador() {
         </Card>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Gasto por sede</CardTitle>

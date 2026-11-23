@@ -21,7 +21,7 @@ export function Calculadora() {
   const [gasto, setGasto] = useState(12000);
   const ahorroMes = Math.max(0, gasto) * AHORRO_OBJETIVO;
   return (
-    <div className="grid gap-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8 lg:grid-cols-2" data-testid="calculadora">
+    <div className="grid grid-cols-1 gap-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8 lg:grid-cols-2" data-testid="calculadora">
       <div className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="calc-personas">Personas que atiendes</Label>
@@ -34,7 +34,7 @@ export function Calculadora() {
           <input type="range" min={1000} max={150000} step={500} value={gasto} onChange={(e) => setGasto(Number(e.target.value))} className="w-full accent-[var(--primary)]" aria-label="Gasto mensual (deslizador)" />
         </div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1" aria-live="polite">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1" aria-live="polite">
         <div className="rounded-2xl bg-accent/15 p-5">
           <p className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-200">
             <PiggyBank className="size-4" /> Ahorro estimado (8 %)

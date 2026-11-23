@@ -76,7 +76,7 @@ export function VistaCarrito({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]">
       <div className="space-y-4">
         {grupos.map((g) => (
           <Card key={g.proveedor} data-testid="grupo-proveedor">

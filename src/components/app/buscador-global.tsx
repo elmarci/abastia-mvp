@@ -66,7 +66,7 @@ export function BuscadorGlobal({ rol }: { rol: RolUsuario }) {
       >
         <Search className="size-4 shrink-0" />
         <span className="hidden truncate sm:inline">Buscar productos o secciones…</span>
-        <kbd className="ml-auto hidden rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] sm:inline">Ctrl K</kbd>
+        <kbd className="ml-auto hidden shrink-0 whitespace-nowrap rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px] sm:inline">Ctrl K</kbd>
       </button>
       <DialogPrimitive.Root open={abierto} onOpenChange={setAbierto}>
         <DialogPrimitive.Portal>

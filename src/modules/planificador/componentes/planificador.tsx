@@ -83,7 +83,7 @@ export function Planificador({ sede, filas }: { sede: { id: string; nombre: stri
   return (
     <div className="space-y-5">
       <Card>
-        <CardContent className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
+        <CardContent className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-xs text-muted-foreground">Sede</p>
             <p className="mt-1 font-medium">{sede.nombre}</p>

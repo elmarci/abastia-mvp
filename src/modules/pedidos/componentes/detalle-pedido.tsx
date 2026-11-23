@@ -52,7 +52,7 @@ export function DetallePedido({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-4">
           {pedido.subPedidos.map((s) => (
             <Card key={s.id} data-testid="subpedido">

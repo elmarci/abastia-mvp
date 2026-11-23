@@ -65,7 +65,7 @@ export function FormularioPropuesta({ licitacionId, codigo, propia }: Props) {
           </div>
           <div className="space-y-2">
             <Label>Certificados que presentas</Label>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {CERTIFICADOS.map((c) => (
                 <label key={c} className="flex items-center gap-2 text-sm">
                   <Checkbox checked={certificados.includes(c)} onCheckedChange={(v) => setCertificados((a) => (v === true ? [...a, c] : a.filter((x) => x !== c)))} /> {c}

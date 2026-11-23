@@ -131,7 +131,7 @@ export function GestorCatalogo({ ofertas, productos }: { ofertas: Oferta[]; prod
             <DialogDescription>El historial de precios se guarda automáticamente para las alertas de precio.</DialogDescription>
           </DialogHeader>
           {form && (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2 sm:col-span-2">
                 <Label>Producto</Label>
                 <Select value={form.productoId} onValueChange={(v) => setForm({ ...form, productoId: v })} disabled={!!form.id}>

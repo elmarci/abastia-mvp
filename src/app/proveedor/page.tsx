@@ -29,14 +29,14 @@ export default async function PanelProveedor() {
           </span>
         }
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi titulo="Ventas del mes" valor={soles(p.ventasMes)} detalle="Total con IGV" icono={<BadgeDollarSign />} />
         <Kpi titulo="Neto a recibir del mes" valor={soles(p.netoMes)} detalle="Después de IGV y comisión" icono={<Wallet />} tono="ahorro" />
         <Kpi titulo="Pedidos pendientes" valor={p.pendientes} detalle={<Link href="/proveedor/pedidos" className="text-primary hover:underline">Atender pedidos</Link>} icono={<Clock />} />
         <Kpi titulo="Calificación" valor={`${num(p.proveedor.calificacion).toFixed(1)} / 5`} detalle={`${p.proveedor.numeroCalificaciones} calificaciones · ${p.entregados} entregados`} icono={<Star />} />
       </div>
 
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_2fr]">
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[1fr_2fr]">
         <Card>
           <CardHeader>
             <CardTitle>Ventas por mes</CardTitle>

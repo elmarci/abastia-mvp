@@ -33,7 +33,7 @@ export default async function PaginaCatalogo({ searchParams }: { searchParams: P
       {productos.length === 0 ? (
         <EstadoVacio icono={<PackageSearch className="size-7" />} titulo="No encontramos productos" descripcion="Prueba con otra palabra o quita los filtros." />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {productos.map((p) => (
             <TarjetaProducto key={p.id} producto={p} mayorista={mayorista} />
           ))}

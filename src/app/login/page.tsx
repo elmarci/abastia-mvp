@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Iniciar sesión" };
 
 export default function PaginaLogin() {
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
+    <div className="grid grid-cols-1 min-h-dvh lg:grid-cols-2">
       <div className="flex flex-col px-4 py-8 sm:px-10">
         <Link href="/" className="w-fit">
           <Logo />

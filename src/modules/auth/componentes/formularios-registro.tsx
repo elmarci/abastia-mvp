@@ -82,7 +82,7 @@ function RegistroEmpresa() {
           )}
           className="space-y-6"
         >
-          <fieldset className="grid gap-4 sm:grid-cols-2">
+          <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <legend className="mb-3 text-sm font-semibold">Datos de la empresa</legend>
             <Campo<D> nombre="ruc" etiqueta="RUC" register={register} errores={e} inputMode="numeric" maxLength={11} ayuda="11 dígitos; validamos el dígito verificador" />
             <Campo<D> nombre="razonSocial" etiqueta="Razón social" register={register} errores={e} />
@@ -98,7 +98,7 @@ function RegistroEmpresa() {
             </div>
             <Distritos id="distrito" etiqueta="Distrito" {...register("distrito")} />
           </fieldset>
-          <fieldset className="grid gap-4 sm:grid-cols-2">
+          <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <legend className="mb-3 text-sm font-semibold">Primera sede</legend>
             <Campo<D> nombre="sedeNombre" etiqueta="Nombre de la sede" register={register} errores={e} placeholder="Sede principal" />
             <Campo<D> nombre="sedeDireccion" etiqueta="Dirección" register={register} errores={e} />
@@ -107,7 +107,7 @@ function RegistroEmpresa() {
             <Campo<D> nombre="montoLimite" etiqueta="Monto límite de aprobación (S/)" tipo="number" register={register} errores={e} ayuda="Los pedidos que lo superen requieren aprobación" />
             <Campo<D> nombre="minutosCompraBase" etiqueta="¿Cuántos minutos te toma hoy armar un pedido?" tipo="number" register={register} errores={e} ayuda="Línea base para medir tu ahorro de tiempo" />
           </fieldset>
-          <fieldset className="grid gap-4 sm:grid-cols-2">
+          <fieldset className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <legend className="mb-3 text-sm font-semibold">Tu usuario</legend>
             <Campo<D> nombre="nombre" etiqueta="Nombre y apellido" register={register} errores={e} autoComplete="name" />
             <Campo<D> nombre="email" etiqueta="Correo" tipo="email" register={register} errores={e} autoComplete="email" />
@@ -140,7 +140,7 @@ function RegistroProveedor() {
           )}
           className="space-y-6"
         >
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Campo<D> nombre="ruc" etiqueta="RUC" register={register} errores={e} inputMode="numeric" maxLength={11} />
             <Campo<D> nombre="razonSocial" etiqueta="Razón social" register={register} errores={e} />
             <div className="space-y-2">
@@ -164,7 +164,7 @@ function RegistroProveedor() {
             </div>
             {e.categorias && <p className="mt-1 text-xs text-destructive">{e.categorias.message}</p>}
           </fieldset>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Campo<D> nombre="nombre" etiqueta="Nombre del contacto" register={register} errores={e} />
             <Campo<D> nombre="telefono" etiqueta="Celular" register={register} errores={e} inputMode="tel" />
             <Campo<D> nombre="email" etiqueta="Correo" tipo="email" register={register} errores={e} />
@@ -196,7 +196,7 @@ function RegistroConsumidor() {
               if (r && !r.ok) toast.error(r.error);
             }),
           )}
-          className="grid gap-4 sm:grid-cols-2"
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2"
         >
           <Campo<D> nombre="nombre" etiqueta="Nombre y apellido" register={register} errores={e} />
           <Campo<D> nombre="telefono" etiqueta="Celular" register={register} errores={e} />

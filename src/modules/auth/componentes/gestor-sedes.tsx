@@ -44,7 +44,7 @@ export function GestorSedes({ sedes, esAprobador }: { sedes: Sede[]; esAprobador
       <Button className="mb-4" onClick={() => setForm({ nombre: "", direccion: "", distrito: "San Isidro", personas: "50", montoLimiteAprobacion: "2000" })}>
         <Plus /> Nueva sede
       </Button>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {sedes.map((s) => (
           <Card key={s.id}>
             <CardContent className="flex items-start gap-4 p-5">
@@ -76,7 +76,7 @@ export function GestorSedes({ sedes, esAprobador }: { sedes: Sede[]; esAprobador
             <DialogTitle>{form?.id ? "Editar sede" : "Nueva sede"}</DialogTitle>
           </DialogHeader>
           {form && (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="sn">Nombre</Label>
                 <Input id="sn" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} />

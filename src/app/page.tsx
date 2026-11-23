@@ -71,7 +71,7 @@ export default async function Landing() {
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60rem_30rem_at_80%_-10%,color-mix(in_oklab,var(--primary)_18%,transparent),transparent),radial-gradient(40rem_24rem_at_0%_10%,color-mix(in_oklab,var(--accent)_18%,transparent),transparent)]" />
-          <div className="relative mx-auto grid max-w-6xl gap-12 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-24">
+          <div className="relative mx-auto grid grid-cols-1 max-w-6xl gap-12 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:pt-24">
             <div>
               <Badge variant="secondary" className="mb-5">
                 <Sparkles className="size-3" /> Abastecimiento B2B con inteligencia artificial · Lima
@@ -150,7 +150,7 @@ export default async function Landing() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">El problema</p>
             <h2 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">Comprar para una organización todavía se hace por teléfono y WhatsApp.</h2>
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 [PhoneOff, "Decenas de proveedores", "Cotizar uno por uno, sin comparar precios ni plazos."],
                 [TrendingDown, "Sobrecostos", "Se paga el precio del primero que contesta, no el mejor."],
@@ -175,7 +175,7 @@ export default async function Landing() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">La solución</p>
             <h2 className="mt-2 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">Un catálogo multiproveedor con IA que te dice cuánto comprar y a quién.</h2>
-            <ol className="mt-10 grid gap-6 md:grid-cols-3">
+            <ol className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 [Sparkles, "1. Planifica con IA", "Indica tus personas atendidas y días a cubrir. El planificador pronostica tu consumo y sugiere la cantidad justa."],
                 [PackageSearch, "2. Compara y arma un solo pedido", "Mejor oferta de proveedores homologados, precio promedio y tu ahorro. Un carrito, varios proveedores."],
@@ -193,7 +193,7 @@ export default async function Landing() {
                 );
               })}
             </ol>
-            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+            <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <div className="rounded-3xl bg-primary p-8 text-primary-foreground">
                 <p className="text-sm uppercase tracking-widest text-white/70">Para compradores</p>
                 <p className="mt-3 text-2xl font-semibold leading-snug">“Todo lo que tu organización consume, a precio cercano al de origen, en la cantidad justa y con calidad garantizada, desde una sola plataforma.”</p>
@@ -297,7 +297,7 @@ export default async function Landing() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <p className="text-sm font-medium uppercase tracking-widest text-primary">Planes y precios</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Empieza gratis. Pasa a Pro cuando quieras planificar con IA.</h2>
-            <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-3">
               {[
                 { nombre: "Básico", precio: "Gratis", detalle: "para siempre", items: ["Catálogo multiproveedor", "Comparación de precios", "Pedido consolidado", "Seguimiento de pedidos"], destacado: false },
                 { nombre: "Pro", precio: `S/ ${PRECIO_PLAN_PRO}`, detalle: "por sede al mes", items: ["Todo lo del plan Básico", "Planificador con IA", "Panel de gasto por sede", "Aprobaciones por monto", "Alertas de precio", "Reportes de ahorro"], destacado: true },
@@ -329,7 +329,7 @@ export default async function Landing() {
 
         {/* Piloto */}
         <section id="piloto" className="border-t border-border bg-card/50 py-20">
-          <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="mx-auto grid grid-cols-1 max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <p className="text-sm font-medium uppercase tracking-widest text-primary">Piloto gratuito</p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Solicita tu piloto gratuito de 30 días</h2>

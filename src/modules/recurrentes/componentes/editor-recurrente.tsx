@@ -48,7 +48,7 @@ export function EditorRecurrente({ r, fechaMinima }: { r: RecurrenteVista; fecha
             <span className="text-sm text-muted-foreground">{r.sede}</span>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
           <div className="space-y-1">
             <Label htmlFor={`nom-${r.id}`} className="text-xs text-muted-foreground">
               Nombre

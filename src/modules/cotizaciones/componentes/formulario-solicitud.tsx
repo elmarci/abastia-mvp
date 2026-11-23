@@ -45,7 +45,7 @@ export function FormularioSolicitud({ sedes, sedeInicial, fechaMinima, productos
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
       <Card>
         <CardHeader className="border-b border-border">
           <CardTitle>Productos y cantidades</CardTitle>

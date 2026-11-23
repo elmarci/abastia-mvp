@@ -67,7 +67,7 @@ export default async function PaginaTrazabilidad({ params }: { params: Promise<{
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="border-b border-border">
               <CardTitle className="flex items-center gap-2">

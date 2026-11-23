@@ -47,7 +47,7 @@ export default async function DetalleLicitacion({ params }: { params: Promise<{ 
           </div>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           {l.estado === "ABIERTA" ? (
             <Card>
@@ -90,7 +90,7 @@ export default async function DetalleLicitacion({ params }: { params: Promise<{ 
                     </div>
                     <Progress value={p.puntaje} />
                   </CardHeader>
-                  <CardContent className="grid gap-3 pt-4 text-sm sm:grid-cols-3">
+                  <CardContent className="grid grid-cols-1 gap-3 pt-4 text-sm sm:grid-cols-3">
                     <p>
                       Monto <span className="block font-semibold cifra">{soles(p.montoTotal)}</span>
                     </p>

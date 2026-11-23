@@ -17,12 +17,12 @@ export default async function Competitividad() {
   return (
     <>
       <Encabezado titulo="Competitividad de precios" descripcion="Tu precio frente a la mejor oferta homologada del mercado. Hasta 2 % por encima se considera competitivo." />
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Kpi titulo="Ofertas activas" valor={ofertas.length} icono={<Target />} />
         <Kpi titulo="Eres la mejor oferta en" valor={`${mejores} productos`} icono={<Trophy />} tono="ahorro" />
         <Kpi titulo="Competitivas" valor={ofertas.length ? porcentaje(competitivas / ofertas.length, 0) : "—"} detalle={`${competitivas} de ${ofertas.length}`} />
       </div>
-      <div className="mt-6 grid gap-3 md:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
         {ofertas.map((o) => (
           <div key={o.id} className="rounded-2xl border border-border bg-card p-4 shadow-xs" data-testid="competitividad">
             <div className="flex items-start justify-between gap-2">

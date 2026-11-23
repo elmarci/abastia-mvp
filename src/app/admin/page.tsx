@@ -24,7 +24,7 @@ export default async function TableroAdmin() {
   return (
     <>
       <Encabezado titulo="Tablero de validación del MVP" descripcion="Hipótesis H1 a H5 calculadas en vivo con los datos de la base. Verde: cumple; ámbar: al 80 % de la meta; rojo: por debajo." />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {hipotesis.map((h) => {
           const e = ESTILO[h.semaforo];
           const valor = h.valor === null ? "—" : h.formato === "porcentaje" ? porcentaje(h.valor) : String(h.valor);

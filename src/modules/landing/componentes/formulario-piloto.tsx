@@ -42,7 +42,7 @@ export function FormularioPiloto() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(enviar)} className="grid gap-4 rounded-3xl border border-border bg-card p-6 shadow-sm sm:grid-cols-2 sm:p-8" noValidate>
+    <form onSubmit={form.handleSubmit(enviar)} className="grid grid-cols-1 gap-4 rounded-3xl border border-border bg-card p-6 shadow-sm sm:grid-cols-2 sm:p-8" noValidate>
       <Campo id="nombre" etiqueta="Nombre y apellido" error={e.nombre?.message}>
         <Input id="nombre" autoComplete="name" {...form.register("nombre")} aria-invalid={!!e.nombre} />
       </Campo>

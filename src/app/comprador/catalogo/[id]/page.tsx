@@ -20,7 +20,7 @@ export default async function PaginaProducto({ params }: { params: Promise<{ id:
       <Link href="/comprador/catalogo" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="size-4" /> Volver al catálogo
       </Link>
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">
           <div className="flex items-start gap-4">
             <span className="flex size-20 shrink-0 items-center justify-center rounded-2xl bg-muted text-5xl" aria-hidden>

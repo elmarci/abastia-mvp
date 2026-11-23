@@ -99,13 +99,13 @@ function BotonDemo({ demo, cargando, deshabilitado, onClick, compacto }: { demo:
       onClick={onClick}
       disabled={deshabilitado}
       data-testid={`demo-${demo.email}`}
-      className="group flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-left shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+      className={`group flex min-w-0 rounded-xl border border-border bg-card shadow-xs transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60 ${compacto ? "flex-col items-center gap-1.5 p-2.5 text-center" : "items-center gap-3 p-3 text-left"}`}
     >
       <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
         {cargando ? <Loader2 className="size-4 animate-spin" /> : <Icono className="size-4" />}
       </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-medium">{demo.rol}</span>
+      <span className="min-w-0 max-w-full">
+        <span className="block truncate text-sm font-medium">{demo.rol}</span>
         {!compacto && <span className="block truncate text-xs text-muted-foreground">{demo.detalle}</span>}
       </span>
     </button>

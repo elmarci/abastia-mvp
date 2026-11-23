@@ -18,7 +18,7 @@ export function NuevoRecurrente({ pedidos }: { pedidos: { id: string; etiqueta: 
   const [frecuencia, setFrecuencia] = useState<"SEMANAL" | "QUINCENAL" | "MENSUAL">("SEMANAL");
   return (
     <Card>
-      <CardContent className="grid gap-3 p-5 sm:grid-cols-[1fr_1fr_160px_auto] sm:items-end">
+      <CardContent className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-[1fr_1fr_160px_auto] sm:items-end">
         <div className="space-y-1">
           <Label htmlFor="rec-pedido" className="text-xs text-muted-foreground">
             A partir del pedido
