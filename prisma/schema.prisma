@@ -1,0 +1,687 @@
+// Esquema de datos de AbastIA (PostgreSQL + Prisma)
+// El dinero se guarda como Decimal(12,2).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────── Enumeraciones ───────────────
+
+enum Rol {
+  COMPRADOR
+  APROBADOR
+  PROVEEDOR
+  ADMIN
+  MAYORISTA
+  CONSUMIDOR
+}
+
+enum Plan {
+  BASICO
+  PRO
+  CORPORATIVO
+}
+
+enum TipoOrganizacion {
+  OFICINA
+  RESTAURANTE
+  HOTEL
+  PROCESADORA
+  RESIDENCIA
+  HOSPITAL
+  COLEGIO
+  PROYECTO
+  BODEGA
+  OTRO
+}
+
+enum EstadoHomologacion {
+  PENDIENTE
+  HOMOLOGADO
+  SUSPENDIDO
+}
+
+enum EstadoSubPedido {
+  RECIBIDO
+  CONFIRMADO
+  EN_PREPARACION
+  EN_CAMINO
+  ENTREGADO
+  RECHAZADO
+  CANCELADO
+}
+
+enum EstadoAprobacion {
+  NO_REQUIERE
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+}
+
+enum CanalPedido {
+  B2B
+  MAYORISTA
+  RETAIL
+  COTIZACION
+  RECURRENTE
+  CONTRATO
+}
+
+enum MetodoPago {
+  TRANSFERENCIA
+  TARJETA
+  CREDITO_30
+}
+
+enum Frecuencia {
+  SEMANAL
+  QUINCENAL
+  MENSUAL
+}
+
+enum EstadoSolicitud {
+  ABIERTA
+  CONVERTIDA
+  CERRADA
+}
+
+enum EstadoLicitacion {
+  ABIERTA
+  CERRADA
+  ADJUDICADA
+  DESIERTA
+}
+
+enum TipoCriterio {
+  PRECIO
+  CALIDAD
+  PLAZO
+  CALIFICACION
+}
+
+enum EstadoEntrega {
+  PROGRAMADA
+  ENTREGADA
+  OBSERVADA
+}
+
+// ─────────────── Núcleo ───────────────
+
+model Usuario {
+  id           String     @id @default(cuid())
+  nombre       String
+  email        String     @unique
+  passwordHash String
+  rol          Rol
+  empresaId    String?
+  empresa      Empresa?   @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  proveedorId  String?
+  proveedor    Proveedor? @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  telefono     String?
+  direccion    String?
+  distrito     String?
+  creadoEn     DateTime   @default(now())
+
+  notificaciones Notificacion[]
+  carrito        Carrito?
+  pedidos        Pedido[]           @relation("PedidoCreador")
+  aprobaciones   Pedido[]           @relation("PedidoAprobador")
+  eventos        EventoEstado[]
+  mensajes       MensajeAsistente[]
+
+  @@index([empresaId])
+  @@index([proveedorId])
+}
+
+model Empresa {
+  id                String           @id @default(cuid())
+  ruc               String           @unique
+  razonSocial       String
+  tipo              TipoOrganizacion
+  distrito          String
+  plan              Plan             @default(BASICO)
+  /// Minutos que el cliente declara dedicar a armar un pedido antes de AbastIA (línea base H5)
+  minutosCompraBase Int              @default(120)
+  creadoEn          DateTime         @default(now())
+
+  sedes        Sede[]
+  usuarios     Usuario[]
+  pedidos      Pedido[]
+  solicitudes  SolicitudCotizacion[]
+  licitaciones Licitacion[]
+  contratos    Contrato[]
+  recurrentes  PedidoRecurrente[]
+}
+
+model Sede {
+  id                    String   @id @default(cuid())
+  empresaId             String
+  empresa               Empresa  @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  nombre                String
+  direccion             String
+  distrito              String
+  personas              Int
+  /// Personas con las que se registró el historial de consumo
+  personasBase          Int
+  montoLimiteAprobacion Decimal  @db.Decimal(12, 2)
+  creadoEn              DateTime @default(now())
+
+  consumos    ConsumoSemanal[]
+  stocks      StockSede[]
+  pedidos     Pedido[]
+  sugerencias SugerenciaIA[]
+  solicitudes SolicitudCotizacion[]
+  recurrentes PedidoRecurrente[]
+  contratos   Contrato[]
+
+  @@index([empresaId])
+}
+
+model Proveedor {
+  id                   String             @id @default(cuid())
+  ruc                  String             @unique
+  razonSocial          String
+  tipo                 String             @default("Distribuidor")
+  categorias           String[]
+  zonaReparto          String[]
+  estado               EstadoHomologacion @default(PENDIENTE)
+  comision             Decimal            @default(0.06) @db.Decimal(5, 4)
+  calificacion         Decimal            @default(0) @db.Decimal(3, 2)
+  numeroCalificaciones Int                @default(0)
+  telefono             String?
+  contacto             String?
+  documentos           String[]
+  homologadoEn         DateTime?
+  creadoEn             DateTime           @default(now())
+
+  usuarios             Usuario[]
+  ofertas              Oferta[]
+  subPedidos           SubPedido[]
+  cotizaciones         Cotizacion[]
+  propuestas           PropuestaLicitacion[]
+  contratos            Contrato[]
+  solicitudesInvitadas SolicitudCotizacion[] @relation("SolicitudInvitados")
+}
+
+model Categoria {
+  id        String     @id @default(cuid())
+  nombre    String     @unique
+  slug      String     @unique
+  icono     String
+  orden     Int        @default(0)
+  productos Producto[]
+}
+
+model Producto {
+  id           String    @id @default(cuid())
+  nombre       String
+  slug         String    @unique
+  descripcion  String?
+  unidad       String
+  /// Unidad en plural para textos ("sacos", "cajas")
+  unidadPlural String
+  emoji        String    @default("📦")
+  categoriaId  String
+  categoria    Categoria @relation(fields: [categoriaId], references: [id])
+  creadoEn     DateTime  @default(now())
+
+  ofertas        Oferta[]
+  consumos       ConsumoSemanal[]
+  stocks         StockSede[]
+  sugerencias    SugerenciaIA[]
+  itemsPedido    ItemPedido[]
+  itemsSolicitud ItemSolicitud[]
+
+  @@index([categoriaId])
+  @@index([nombre])
+}
+
+model Oferta {
+  id            String    @id @default(cuid())
+  proveedorId   String
+  proveedor     Proveedor @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  productoId    String
+  producto      Producto  @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  precio        Decimal   @db.Decimal(12, 2)
+  /// [Alcance ampliado] precio unitario retail (unidad suelta)
+  precioRetail  Decimal?  @db.Decimal(12, 2)
+  unidadRetail  String?
+  stock         Int
+  pedidoMinimo  Int       @default(1)
+  plazoDias     Int       @default(1)
+  activa        Boolean   @default(true)
+  actualizadoEn DateTime  @updatedAt
+
+  historial    HistorialPrecio[]
+  escalas      EscalaPrecio[]
+  lotes        Lote[]
+  itemsCarrito ItemCarrito[]
+  itemsPedido  ItemPedido[]
+
+  @@unique([proveedorId, productoId])
+  @@index([productoId])
+}
+
+model HistorialPrecio {
+  id       String   @id @default(cuid())
+  ofertaId String
+  oferta   Oferta   @relation(fields: [ofertaId], references: [id], onDelete: Cascade)
+  precio   Decimal  @db.Decimal(12, 2)
+  fecha    DateTime
+
+  @@index([ofertaId, fecha])
+}
+
+model ConsumoSemanal {
+  id         String   @id @default(cuid())
+  sedeId     String
+  sede       Sede     @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  productoId String
+  producto   Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  /// Lunes de la semana
+  semana     DateTime @db.Date
+  cantidad   Int
+
+  @@unique([sedeId, productoId, semana])
+}
+
+model StockSede {
+  id            String   @id @default(cuid())
+  sedeId        String
+  sede          Sede     @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  productoId    String
+  producto      Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  cantidad      Int
+  actualizadoEn DateTime @updatedAt
+
+  @@unique([sedeId, productoId])
+}
+
+model Carrito {
+  id         String        @id @default(cuid())
+  usuarioId  String        @unique
+  usuario    Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  sedeId     String?
+  /// Momento en que se agregó el primer producto (H5)
+  iniciadoEn DateTime?
+  items      ItemCarrito[]
+}
+
+model ItemCarrito {
+  id           String        @id @default(cuid())
+  carritoId    String
+  carrito      Carrito       @relation(fields: [carritoId], references: [id], onDelete: Cascade)
+  ofertaId     String
+  oferta       Oferta        @relation(fields: [ofertaId], references: [id], onDelete: Cascade)
+  cantidad     Int
+  sugerenciaId String?       @unique
+  sugerencia   SugerenciaIA? @relation(fields: [sugerenciaId], references: [id], onDelete: SetNull)
+
+  @@unique([carritoId, ofertaId])
+}
+
+model Pedido {
+  id               String           @id @default(cuid())
+  /// El código visible PED-XXXX se deriva de este número
+  numero           Int              @unique @default(autoincrement())
+  canal            CanalPedido      @default(B2B)
+  empresaId        String?
+  empresa          Empresa?         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  sedeId           String?
+  sede             Sede?            @relation(fields: [sedeId], references: [id], onDelete: SetNull)
+  creadoPorId      String
+  creadoPor        Usuario          @relation("PedidoCreador", fields: [creadoPorId], references: [id], onDelete: Cascade)
+  direccionEntrega String?
+  distritoEntrega  String?
+  fechaEntrega     DateTime         @db.Date
+  subtotal         Decimal          @db.Decimal(12, 2)
+  igv              Decimal          @db.Decimal(12, 2)
+  total            Decimal          @db.Decimal(12, 2)
+  totalMercado     Decimal          @db.Decimal(12, 2)
+  ahorro           Decimal          @db.Decimal(12, 2)
+  metodoPago       MetodoPago       @default(TRANSFERENCIA)
+  estadoAprobacion EstadoAprobacion @default(NO_REQUIERE)
+  aprobadoPorId    String?
+  aprobadoPor      Usuario?         @relation("PedidoAprobador", fields: [aprobadoPorId], references: [id], onDelete: SetNull)
+  aprobadoEn       DateTime?
+  motivoRechazo    String?
+  /// Segundos desde el primer producto agregado hasta la confirmación (H5)
+  segundosArmado   Int?
+  notas            String?
+  creadoEn         DateTime         @default(now())
+
+  subPedidos  SubPedido[]
+  eventos     EventoEstado[]
+  sugerencias SugerenciaIA[]
+
+  @@index([empresaId, creadoEn])
+  @@index([creadoPorId])
+}
+
+model SubPedido {
+  id            String          @id @default(cuid())
+  pedidoId      String
+  pedido        Pedido          @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  proveedorId   String
+  proveedor     Proveedor       @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  estado        EstadoSubPedido @default(RECIBIDO)
+  subtotal      Decimal         @db.Decimal(12, 2)
+  igv           Decimal         @db.Decimal(12, 2)
+  total         Decimal         @db.Decimal(12, 2)
+  /// Comisión congelada al momento del pedido
+  comision      Decimal         @db.Decimal(5, 4)
+  motivoRechazo String?
+  actualizadoEn DateTime        @updatedAt
+
+  items     ItemPedido[]
+  eventos   EventoEstado[]
+  recepcion Recepcion?
+
+  @@index([proveedorId, estado])
+  @@index([pedidoId])
+}
+
+model ItemPedido {
+  id             String    @id @default(cuid())
+  subPedidoId    String
+  subPedido      SubPedido @relation(fields: [subPedidoId], references: [id], onDelete: Cascade)
+  productoId     String
+  producto       Producto  @relation(fields: [productoId], references: [id])
+  ofertaId       String?
+  oferta         Oferta?   @relation(fields: [ofertaId], references: [id], onDelete: SetNull)
+  cantidad       Int
+  /// Precio unitario congelado al momento de la compra
+  precioUnitario Decimal   @db.Decimal(12, 2)
+  /// Precio promedio de mercado congelado al momento de la compra
+  precioPromedio Decimal   @db.Decimal(12, 2)
+  loteId         String?
+  lote           Lote?     @relation(fields: [loteId], references: [id], onDelete: SetNull)
+
+  @@index([subPedidoId])
+}
+
+model EventoEstado {
+  id          String     @id @default(cuid())
+  pedidoId    String
+  pedido      Pedido     @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  subPedidoId String?
+  subPedido   SubPedido? @relation(fields: [subPedidoId], references: [id], onDelete: Cascade)
+  estado      String
+  descripcion String
+  usuarioId   String?
+  usuario     Usuario?   @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  fecha       DateTime   @default(now())
+
+  @@index([pedidoId, fecha])
+}
+
+model Recepcion {
+  id              String    @id @default(cuid())
+  subPedidoId     String    @unique
+  subPedido       SubPedido @relation(fields: [subPedidoId], references: [id], onDelete: Cascade)
+  conforme        Boolean
+  observacion     String?
+  tipoObservacion String?
+  calificacion    Int
+  temperatura     Decimal?  @db.Decimal(4, 1)
+  fecha           DateTime  @default(now())
+}
+
+model SugerenciaIA {
+  id               String   @id @default(cuid())
+  sedeId           String
+  sede             Sede     @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  productoId       String
+  producto         Producto @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  pedidoId         String?
+  pedido           Pedido?  @relation(fields: [pedidoId], references: [id], onDelete: SetNull)
+  personas         Int
+  dias             Int
+  stock            Int
+  pronostico       Decimal  @db.Decimal(10, 2)
+  modelo           String   @default("BASE")
+  cantidadSugerida Int
+  cantidadComprada Int?
+  aceptada         Boolean?
+  creadoEn         DateTime @default(now())
+
+  itemCarrito ItemCarrito?
+
+  @@index([sedeId])
+}
+
+model Notificacion {
+  id        String   @id @default(cuid())
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo    String
+  mensaje   String
+  enlace    String?
+  leida     Boolean  @default(false)
+  creadoEn  DateTime @default(now())
+
+  @@index([usuarioId, leida])
+}
+
+model Lead {
+  id       String   @id @default(cuid())
+  nombre   String
+  empresa  String
+  email    String
+  telefono String?
+  tipo     String
+  personas Int?
+  mensaje  String?
+  creadoEn DateTime @default(now())
+}
+
+// ─────────────── Alcance ampliado ───────────────
+
+model EscalaPrecio {
+  id             String  @id @default(cuid())
+  ofertaId       String
+  oferta         Oferta  @relation(fields: [ofertaId], references: [id], onDelete: Cascade)
+  cantidadMinima Int
+  precio         Decimal @db.Decimal(12, 2)
+
+  @@unique([ofertaId, cantidadMinima])
+}
+
+model SolicitudCotizacion {
+  id             String          @id @default(cuid())
+  codigo         String          @unique
+  empresaId      String
+  empresa        Empresa         @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  sedeId         String
+  sede           Sede            @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  titulo         String
+  categoria      String?
+  fechaRequerida DateTime        @db.Date
+  estado         EstadoSolicitud @default(ABIERTA)
+  pedidoId       String?
+  creadoEn       DateTime        @default(now())
+
+  items        ItemSolicitud[]
+  cotizaciones Cotizacion[]
+  invitados    Proveedor[]     @relation("SolicitudInvitados")
+}
+
+model ItemSolicitud {
+  id          String              @id @default(cuid())
+  solicitudId String
+  solicitud   SolicitudCotizacion @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  productoId  String
+  producto    Producto            @relation(fields: [productoId], references: [id])
+  cantidad    Int
+
+  precios PrecioCotizado[]
+}
+
+model Cotizacion {
+  id          String              @id @default(cuid())
+  solicitudId String
+  solicitud   SolicitudCotizacion @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  proveedorId String
+  proveedor   Proveedor           @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  plazoDias   Int
+  condiciones String
+  total       Decimal             @db.Decimal(12, 2)
+  creadoEn    DateTime            @default(now())
+
+  precios PrecioCotizado[]
+
+  @@unique([solicitudId, proveedorId])
+}
+
+model PrecioCotizado {
+  id              String        @id @default(cuid())
+  cotizacionId    String
+  cotizacion      Cotizacion    @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  itemSolicitudId String
+  itemSolicitud   ItemSolicitud @relation(fields: [itemSolicitudId], references: [id], onDelete: Cascade)
+  precioUnitario  Decimal       @db.Decimal(12, 2)
+}
+
+model Licitacion {
+  id                       String           @id @default(cuid())
+  codigo                   String           @unique
+  empresaId                String
+  empresa                  Empresa          @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  titulo                   String
+  descripcion              String
+  certificadosObligatorios String[]
+  plazoContratoMeses       Int
+  frecuencia               Frecuencia
+  volumenEstimado          String
+  presupuestoReferencial   Decimal?         @db.Decimal(12, 2)
+  fechaCierre              DateTime
+  estado                   EstadoLicitacion @default(ABIERTA)
+  adjudicadaAId            String?
+  creadoEn                 DateTime         @default(now())
+
+  criterios  CriterioLicitacion[]
+  propuestas PropuestaLicitacion[]
+  contrato   Contrato?
+}
+
+model CriterioLicitacion {
+  id           String       @id @default(cuid())
+  licitacionId String
+  licitacion   Licitacion   @relation(fields: [licitacionId], references: [id], onDelete: Cascade)
+  tipo         TipoCriterio
+  peso         Int
+
+  @@unique([licitacionId, tipo])
+}
+
+model PropuestaLicitacion {
+  id               String     @id @default(cuid())
+  licitacionId     String
+  licitacion       Licitacion @relation(fields: [licitacionId], references: [id], onDelete: Cascade)
+  proveedorId      String
+  proveedor        Proveedor  @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  montoTotal       Decimal    @db.Decimal(12, 2)
+  plazoEntregaDias Int
+  certificados     String[]
+  descripcion      String
+  puntaje          Decimal?   @db.Decimal(6, 2)
+  creadoEn         DateTime   @default(now())
+
+  @@unique([licitacionId, proveedorId])
+}
+
+model Contrato {
+  id           String      @id @default(cuid())
+  codigo       String      @unique
+  licitacionId String?     @unique
+  licitacion   Licitacion? @relation(fields: [licitacionId], references: [id], onDelete: SetNull)
+  empresaId    String
+  empresa      Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  sedeId       String?
+  sede         Sede?       @relation(fields: [sedeId], references: [id], onDelete: SetNull)
+  proveedorId  String
+  proveedor    Proveedor   @relation(fields: [proveedorId], references: [id], onDelete: Cascade)
+  descripcion  String
+  montoTotal   Decimal     @db.Decimal(12, 2)
+  frecuencia   Frecuencia
+  inicio       DateTime    @db.Date
+  fin          DateTime    @db.Date
+  creadoEn     DateTime    @default(now())
+
+  entregas EntregaProgramada[]
+}
+
+model EntregaProgramada {
+  id          String        @id @default(cuid())
+  contratoId  String
+  contrato    Contrato      @relation(fields: [contratoId], references: [id], onDelete: Cascade)
+  fecha       DateTime      @db.Date
+  estado      EstadoEntrega @default(PROGRAMADA)
+  loteId      String?
+  lote        Lote?         @relation(fields: [loteId], references: [id], onDelete: SetNull)
+  /// Temperatura registrada en la entrega (preparado para sensores IoT)
+  temperatura Decimal?      @db.Decimal(4, 1)
+  observacion String?
+
+  @@index([contratoId, fecha])
+}
+
+model PedidoRecurrente {
+  id               String     @id @default(cuid())
+  empresaId        String
+  empresa          Empresa    @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  sedeId           String
+  sede             Sede       @relation(fields: [sedeId], references: [id], onDelete: Cascade)
+  creadoPorId      String
+  nombre           String
+  frecuencia       Frecuencia
+  proximaEjecucion DateTime   @db.Date
+  activo           Boolean    @default(true)
+  /// Lista de { ofertaId, cantidad }
+  items            Json
+  ultimaEjecucion  DateTime?
+  creadoEn         DateTime   @default(now())
+}
+
+model Lote {
+  id                String   @id @default(cuid())
+  codigo            String   @unique
+  ofertaId          String
+  oferta            Oferta   @relation(fields: [ofertaId], references: [id], onDelete: Cascade)
+  fechaProduccion   DateTime @db.Date
+  fechaVencimiento  DateTime @db.Date
+  origen            String
+  descripcionOrigen String?
+  creadoEn          DateTime @default(now())
+
+  certificados Certificado[]
+  itemsPedido  ItemPedido[]
+  entregas     EntregaProgramada[]
+}
+
+model Certificado {
+  id       String   @id @default(cuid())
+  loteId   String
+  lote     Lote     @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  tipo     String
+  numero   String
+  emisor   String
+  vigencia DateTime @db.Date
+}
+
+model MensajeAsistente {
+  id        String   @id @default(cuid())
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  autor     String
+  contenido String
+  creadoEn  DateTime @default(now())
+
+  @@index([usuarioId, creadoEn])
+}
